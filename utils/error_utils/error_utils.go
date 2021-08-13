@@ -13,8 +13,8 @@ type MessageErr interface {
 
 type messageErr struct {
 	ErrMessage string `json:"message"`
-	ErrStatus int `json:"status"`
-	ErrError string `json:"error"`
+	ErrStatus  int    `json:"status"`
+	ErrError   string `json:"error"`
 }
 
 func (e *messageErr) Error() string {
@@ -32,24 +32,24 @@ func (e *messageErr) Status() int {
 func NewNotFoundError(message string) MessageErr {
 	return &messageErr{
 		ErrMessage: message,
-		ErrStatus: http.StatusNotFound,
-		ErrError: "not_found",
+		ErrStatus:  http.StatusNotFound,
+		ErrError:   "not_found",
 	}
 }
 
 func NewBadRequestError(message string) MessageErr {
 	return &messageErr{
 		ErrMessage: message,
-		ErrStatus: http.StatusBadRequest,
-		ErrError: "bad_request",
+		ErrStatus:  http.StatusBadRequest,
+		ErrError:   "bad_request",
 	}
 }
 
 func NewUnprocessibleEntityError(message string) MessageErr {
 	return &messageErr{
 		ErrMessage: message,
-		ErrStatus: http.StatusUnprocessableEntity,
-		ErrError: "invalid_request",
+		ErrStatus:  http.StatusUnprocessableEntity,
+		ErrError:   "invalid_request",
 	}
 }
 
@@ -64,7 +64,7 @@ func NewApiErrFromBytes(body []byte) (MessageErr, error) {
 func NewInternalServerError(message string) MessageErr {
 	return &messageErr{
 		ErrMessage: message,
-		ErrStatus: http.StatusInternalServerError,
-		ErrError: "server_error",
+		ErrStatus:  http.StatusInternalServerError,
+		ErrError:   "server_error",
 	}
 }

@@ -3,8 +3,8 @@ package error_formats
 import (
 	"efficient-api/utils/error_utils"
 	"fmt"
-	"strings"
 	"github.com/go-sql-driver/mysql"
+	"strings"
 )
 
 func ParseError(err error) error_utils.MessageErr {
