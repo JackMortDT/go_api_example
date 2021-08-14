@@ -29,7 +29,6 @@ type messageRepoInterface interface {
 	GetAll() ([]Message, error_utils.MessageErr)
 	Initialize(string, string, string, string, string, string) *sql.DB
 }
-
 type messageRepo struct {
 	db *sql.DB
 }
@@ -45,6 +44,10 @@ func (mr *messageRepo) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, 
 	fmt.Printf("We are connected to the %s database", Dbdriver)
 
 	return mr.db
+}
+
+func NewMessageRepository(db *sql.DB) messageRepoInterface {
+	return &messageRepo{db: db}
 }
 
 func (mr *messageRepo) Get(messageId int64) (*Message, error_utils.MessageErr) {
@@ -66,7 +69,7 @@ func (mr *messageRepo) Get(messageId int64) (*Message, error_utils.MessageErr) {
 func (mr *messageRepo) GetAll() ([]Message, error_utils.MessageErr) {
 	stmt, err := mr.db.Prepare(queryGetAllMessages)
 	if err != nil {
-		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to prepare all message: %s", err.Error()))
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to prepare all messages: %s", err.Error()))
 	}
 	defer stmt.Close()
 
