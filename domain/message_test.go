@@ -130,41 +130,41 @@ func TestMessageRepo_Create(t *testing.T) {
 		},
 		{
 			name: "Empty title",
-			s: s,
+			s:    s,
 			request: &Message{
 				Title:     "",
 				Body:      "body",
 				CreatedAt: tm,
 			},
-			mock: func(){
+			mock: func() {
 				mock.ExpectPrepare("INSERT INTO messages").ExpectExec().WithArgs("title", "body", tm).WillReturnError(errors.New("empty title"))
 			},
 			wantErr: true,
 		},
 		{
 			name: "Empty body",
-			s: s,
+			s:    s,
 			request: &Message{
 				Title:     "title",
 				Body:      "",
 				CreatedAt: tm,
 			},
-			mock: func(){
+			mock: func() {
 				mock.ExpectPrepare("INSERT INTO messages").ExpectExec().WithArgs("title", "body", tm).WillReturnError(errors.New("empty body"))
 			},
 			wantErr: true,
 		},
 		{
 			name: "Invalid SQL query",
-			s: s,
+			s:    s,
 			request: &Message{
 				Title:     "title",
 				Body:      "body",
 				CreatedAt: tm,
 			},
-			mock: func(){
+			mock: func() {
 				//Instead of using "INSERT", we used "INSETER"
-				mock.ExpectPrepare("INSERT INTO wrong_table").ExpectExec().WithArgs("title", "body", tm).WillReturnError( errors.New("invalid sql query"))
+				mock.ExpectPrepare("INSERT INTO wrong_table").ExpectExec().WithArgs("title", "body", tm).WillReturnError(errors.New("invalid sql query"))
 			},
 			wantErr: true,
 		},
