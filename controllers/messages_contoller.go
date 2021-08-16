@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// Since we are going for the message id more than we, we extracted this functionality to a function so we can have a DRY code.
+//Since we are going for the message id more than we, we extracted this functionality to a function so we can have a DRY code.
 func getMessageId(msgIdParam string) (int64, error_utils.MessageErr) {
 	msgId, msgErr := strconv.ParseInt(msgIdParam, 10, 64)
 	if msgErr != nil {
@@ -26,7 +26,8 @@ func GetMessage(c *gin.Context) {
 	}
 	message, getErr := services.MessagesService.GetMessage(msgId)
 	if getErr != nil {
-		c.JSON(getErr.Status(), err)
+		c.JSON(getErr.Status(), getErr)
+		return
 	}
 	c.JSON(http.StatusOK, message)
 }
@@ -35,6 +36,7 @@ func GetAllMessages(c *gin.Context) {
 	messages, getErr := services.MessagesService.GetAllMessages()
 	if getErr != nil {
 		c.JSON(getErr.Status(), getErr)
+		return
 	}
 	c.JSON(http.StatusOK, messages)
 }
