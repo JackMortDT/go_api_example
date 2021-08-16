@@ -18,6 +18,10 @@ func getMessageId(msgIdParam string) (int64, error_utils.MessageErr) {
 	return msgId, nil
 }
 
+func HelloWorld(c *gin.Context) {
+	c.JSON(http.StatusOK, map[string]string{"message": "Hello go!!"})
+}
+
 func GetMessage(c *gin.Context) {
 	msgId, err := getMessageId(c.Param("message_id"))
 	if err != nil {

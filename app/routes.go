@@ -3,6 +3,7 @@ package app
 import "efficient-api/controllers"
 
 func routes() {
+	router.GET("/", controllers.HelloWorld)
 	router.GET("/messages/:message_id", controllers.GetMessage)
 	router.GET("/messages", controllers.GetAllMessages)
 	router.POST("/messages", controllers.CreateMessage)

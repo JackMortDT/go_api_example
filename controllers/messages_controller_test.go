@@ -6,11 +6,13 @@ import (
 	"efficient-api/services"
 	"efficient-api/utils/error_utils"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -37,6 +39,15 @@ func (sm *serviceMock) DeleteMessage(msgId int64) error_utils.MessageErr {
 }
 func (sm *serviceMock) GetAllMessages() ([]domain.Message, error_utils.MessageErr) {
 	return getAllMessageService()
+}
+
+func TestHelloWorld_Success(t *testing.T) {
+	r := gin.Default()
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
+	rr := httptest.NewRecorder()
+	r.GET("/", HelloWorld)
+	r.ServeHTTP(rr, req)
+	assert.EqualValues(t, http.StatusOK, rr.Code)
 }
 
 ///////////////////////////////////////////////////////////////
