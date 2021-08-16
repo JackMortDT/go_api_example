@@ -41,7 +41,7 @@ func (mr *messageRepo) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, 
 	if err != nil {
 		log.Fatal("This is the error connecting to the database:", err)
 	}
-	fmt.Printf("We are connected to the %s database\n", Dbdriver)
+	fmt.Printf("We are connected to the %s database", Dbdriver)
 
 	return mr.db
 }

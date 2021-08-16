@@ -1,24 +1,13 @@
 package domain
 
 import (
-	//	"errors"
 	"errors"
 	"fmt"
+	"github.com/DATA-DOG/go-sqlmock"
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/DATA-DOG/go-sqlmock"
 )
-
-type Test struct {
-	name    string
-	s       messageRepoInterface
-	msgId   int64
-	mock    func()
-	want    *Message
-	wantErr bool
-}
 
 var created_at = time.Now()
 
@@ -188,10 +177,11 @@ func TestMessageRepo_Create(t *testing.T) {
 func TestMessageRepo_Update(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an error '%s' was not expected when opening a stub database", err)
 	}
 	defer db.Close()
 	s := NewMessageRepository(db)
+
 	tests := []struct {
 		name    string
 		s       messageRepoInterface
@@ -205,28 +195,28 @@ func TestMessageRepo_Update(t *testing.T) {
 			s:    s,
 			request: &Message{
 				Id:    1,
-				Title: "title",
-				Body:  "body",
+				Title: "update title",
+				Body:  "update body",
 			},
 			mock: func() {
-				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("title", "body", 1).WillReturnResult(sqlmock.NewResult(0, 1))
+				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("update title", "update body", 1).WillReturnResult(sqlmock.NewResult(0, 1))
 			},
 			want: &Message{
 				Id:    1,
-				Title: "title",
-				Body:  "body",
+				Title: "update title",
+				Body:  "update body",
 			},
 		},
 		{
-			name: "Invalid SQL query",
+			name: "Invalid SQL Query",
 			s:    s,
 			request: &Message{
 				Id:    1,
-				Title: "title",
-				Body:  "body",
+				Title: "update title",
+				Body:  "update body",
 			},
 			mock: func() {
-				mock.ExpectPrepare("UPDATE wrong_table").ExpectExec().WithArgs("title", "body", 1).WillReturnError(errors.New("invalid sql query"))
+				mock.ExpectPrepare("UPDATER messages").ExpectExec().WithArgs("update title", "update body", 1).WillReturnError(errors.New("error in sql query statement"))
 			},
 			wantErr: true,
 		},
@@ -235,65 +225,65 @@ func TestMessageRepo_Update(t *testing.T) {
 			s:    s,
 			request: &Message{
 				Id:    0,
-				Title: "title",
-				Body:  "body",
+				Title: "update title",
+				Body:  "update body",
 			},
 			mock: func() {
-				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("title", "body", 0).WillReturnError(errors.New("invalid update id"))
+				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("update title", "update body", 0).WillReturnError(errors.New("invalid update id"))
 			},
 			wantErr: true,
 		},
 		{
-			name: "Empty title",
+			name: "Empty Title",
 			s:    s,
 			request: &Message{
 				Id:    1,
 				Title: "",
-				Body:  "body",
+				Body:  "update body",
 			},
 			mock: func() {
-				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("", "body", 1).WillReturnError(errors.New("empty title"))
+				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("", "update body", 1).WillReturnError(errors.New("Please enter a valid title"))
 			},
 			wantErr: true,
 		},
 		{
-			name: "Empty body",
+			name: "Empty Body",
 			s:    s,
 			request: &Message{
 				Id:    1,
-				Title: "title",
+				Title: "update title",
 				Body:  "",
 			},
 			mock: func() {
-				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("title", "", 1).WillReturnError(errors.New("empty title"))
+				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("update title", "", 1).WillReturnError(errors.New("Please enter a valid body"))
 			},
 			wantErr: true,
 		},
 		{
-			name: "Updated failed",
+			name: "Update failed",
 			s:    s,
 			request: &Message{
 				Id:    1,
-				Title: "title",
-				Body:  "body",
+				Title: "update title",
+				Body:  "update body",
 			},
 			mock: func() {
-				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("title", "body", 1).WillReturnResult(sqlmock.NewErrorResult(errors.New("Updated failed")))
+				mock.ExpectPrepare("UPDATE messages").ExpectExec().WithArgs("update title", "update body", 1).WillReturnResult(sqlmock.NewErrorResult(errors.New("Update failed")))
 			},
 			wantErr: true,
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mock()
 			got, err := tt.s.Update(tt.request)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Create() error new = %v, wantErr %v", err, tt.wantErr)
+				fmt.Println("this is the error message: ", err.Message())
+				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if err == nil && !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Create() = %v, want %v", got, tt.want)
+				t.Errorf("Update() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -316,9 +306,11 @@ func TestMessageRepo_GetAll(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			//When everything works as expected
 			name: "OK",
 			s:    s,
 			mock: func() {
+				//We added two rows
 				rows := sqlmock.NewRows([]string{"Id", "Title", "Body", "CreatedAt"}).AddRow(1, "first title", "first body", created_at).AddRow(2, "second title", "second body", created_at)
 				mock.ExpectPrepare("SELECT (.+) FROM messages").ExpectQuery().WillReturnRows(rows)
 			},
@@ -341,7 +333,9 @@ func TestMessageRepo_GetAll(t *testing.T) {
 			name: "Invalid SQL Syntax",
 			s:    s,
 			mock: func() {
+				//We added two rows
 				_ = sqlmock.NewRows([]string{"Id", "Title", "Body", "CreatedAt"}).AddRow(1, "first title", "first body", created_at).AddRow(2, "second title", "second body", created_at)
+				//"SELECTS" is used instead of "SELECT"
 				mock.ExpectPrepare("SELECTS (.+) FROM messages").ExpectQuery().WillReturnError(errors.New("Error when trying to prepare all messages"))
 			},
 			wantErr: true,
@@ -379,6 +373,7 @@ func TestMessageRepo_Delete(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			//When everything works as expected
 			name:  "OK",
 			s:     s,
 			msgId: 1,
