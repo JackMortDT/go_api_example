@@ -3,11 +3,10 @@ package app
 import (
 	"efficient-api/domain"
 	"fmt"
-	"log"
-	"os"
-
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"log"
+	"os"
 )
 
 var (
@@ -22,6 +21,7 @@ func init() {
 }
 
 func StartApp() {
+
 	dbdriver := os.Getenv("DBDRIVER")
 	username := os.Getenv("USERNAME")
 	password := os.Getenv("PASSWORD")
@@ -29,7 +29,7 @@ func StartApp() {
 	database := os.Getenv("DATABASE")
 	port := os.Getenv("PORT")
 
-	domain.MessageRepo.Initialize(dbdriver, username, password, host, database, port)
+	domain.MessageRepo.Initialize(dbdriver, username, password, port, host, database)
 	fmt.Println("DATABASE STARTED")
 
 	routes()
