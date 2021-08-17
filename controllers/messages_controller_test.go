@@ -6,7 +6,6 @@ import (
 	"efficient-api/services"
 	"efficient-api/utils/error_utils"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
