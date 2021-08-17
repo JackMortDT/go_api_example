@@ -27,3 +27,9 @@ Build your application and run it
 go build main.go
 ./main
 ```
+
+Build your docker image
+
+```bash
+docker build -t efficient-api .
+```
