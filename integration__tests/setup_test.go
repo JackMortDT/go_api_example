@@ -13,11 +13,12 @@ import (
 
 const (
 	queryTruncateMessage = "TRUNCATE TABLE messages;"
-	queryInsertMessage  = "INSERT INTO messages(title, body, created_at) VALUES(?, ?, ?);"
-	queryGetAllMessages = "SELECT id, title, body, created_at FROM messages;"
+	queryInsertMessage   = "INSERT INTO messages(title, body, created_at) VALUES(?, ?, ?);"
+	queryGetAllMessages  = "SELECT id, title, body, created_at FROM messages;"
 )
+
 var (
-	dbConn  *sql.DB
+	dbConn *sql.DB
 )
 
 func TestMain(m *testing.M) {
@@ -106,7 +107,7 @@ func seedMessages() ([]domain.Message, error) {
 
 	rows, err := get_stmt.Query()
 	if err != nil {
-		return nil,  err
+		return nil, err
 	}
 	defer rows.Close()
 
